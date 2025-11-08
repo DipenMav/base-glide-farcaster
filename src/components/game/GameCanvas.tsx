@@ -12,6 +12,7 @@ import {
   JUMP_FORCE,
 } from '@/lib/gameEngine';
 import { soundManager } from '@/lib/sounds';
+import baseLogoImg from '@/assets/base-logo.png';
 
 interface GameCanvasProps {
   isPlaying: boolean;
@@ -50,9 +51,9 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
     // Initialize with first obstacle
     setObstacles([createObstacle(canvas.width, canvas.height, 0)]);
 
-    // Load Base logo (placeholder for now, will generate later)
+    // Load Base logo
     const img = new Image();
-    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyMCIgZmlsbD0iIzBlYTVhNCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+QjwvdGV4dD48L3N2Zz4=';
+    img.src = baseLogoImg;
     baseLogoRef.current = img;
 
     return () => {
