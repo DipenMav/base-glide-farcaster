@@ -1,5 +1,6 @@
 import { GameButton } from '@/components/ui/game-button';
 import { Play, Trophy, Settings, Share2, Heart } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface MenuScreenProps {
   onStartGame: () => void;
@@ -53,19 +54,22 @@ export const MenuScreen = ({
         </GameButton>
 
         <button
-          onClick={() => window.open('https://pay.coinbase.com/buy/select-asset?address=0xEcAb7178c118Ee4A664420F510253511539F07A5&network=base', '_blank')}
-          className="relative mt-4 flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--primary-glow))] text-white font-semibold shadow-glow transition-all duration-200 hover:scale-105 active:scale-95"
+          onClick={() => {
+            window.location.href = 'ethereum:0xEcAb7178c118Ee4A664420F510253511539F07A5?chain=base';
+            toast.success('Thanks for supporting indie devs 🩵');
+          }}
+          className="relative mt-4 flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0ea5a4] to-[#2dd4bf] font-bold text-[#042026] shadow-glow transition-all duration-200 hover:scale-105 active:scale-95"
         >
           <Heart className="w-4 h-4 fill-current" />
           💙 Tip Developer
         </button>
         <p className="text-xs text-muted-foreground text-center -mt-2">
-          Thanks for supporting indie devs 🩵
+          Send ETH or USDC on Base
         </p>
       </div>
 
-      <div className="absolute bottom-8 text-xs text-muted-foreground">
-        Built by <span className="text-primary">@dipenmav</span>
+      <div className="absolute bottom-8 text-xs text-muted-foreground text-center">
+        Built by <span className="text-primary">@dipenmav</span> 💙 on Base
       </div>
     </div>
   );
