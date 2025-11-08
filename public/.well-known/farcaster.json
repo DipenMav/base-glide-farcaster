@@ -1,0 +1,20 @@
+{
+  "name": "Base Glide",
+  "short_name": "BaseGlide",
+  "description": "Flap through market charts — beat your friends and share on Farcaster/Base.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071622",
+  "theme_color": "#0ea5a4",
+  "miniapp": {
+    "version": "0.1.0",
+    "author": "Dipen Mav",
+    "splash": {
+      "background_color": "#071622"
+    },
+    "display": {
+      "orientation": "portrait",
+      "modal": true
+    }
+  }
+}
