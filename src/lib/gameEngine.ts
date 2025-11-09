@@ -1,12 +1,12 @@
 import { Player, Obstacle } from '@/types/game';
 
 // Base values for 60 FPS (normalized with delta time)
-export const GRAVITY = 0.4;
-export const JUMP_FORCE = -8;
-export const OBSTACLE_SPEED = 2;
-export const OBSTACLE_GAP = 200;
+export const GRAVITY = 0.5;
+export const JUMP_FORCE = -9;
+export const OBSTACLE_SPEED = 2.5;
+export const OBSTACLE_GAP = 190;
 export const OBSTACLE_WIDTH = 60;
-export const OBSTACLE_SPACING = 350;
+export const OBSTACLE_SPACING = 320;
 export const PLAYER_RADIUS = 20;
 
 export const createPlayer = (canvasHeight: number): Player => ({
@@ -122,10 +122,16 @@ export const drawPlayer = (
 
   if (baseLogoImg && baseLogoImg.complete) {
     const size = player.radius * 2;
-    // Enable smooth rendering for better quality
+    // Enable smooth rendering and remove any white edges
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(baseLogoImg, -size / 2, -size / 2, size, size);
+    
+    // Clear any background to prevent white border
+    ctx.globalCompositeOperation = 'source-over';
+    
+    // Draw with slight inset to avoid white edge artifacts
+    const inset = 0.5;
+    ctx.drawImage(baseLogoImg, -size / 2 + inset, -size / 2 + inset, size - inset * 2, size - inset * 2);
   } else {
     // Fallback circle
     ctx.beginPath();
