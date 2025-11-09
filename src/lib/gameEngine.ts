@@ -7,7 +7,7 @@ export const OBSTACLE_SPEED = 2.5;
 export const OBSTACLE_GAP = 190;
 export const OBSTACLE_WIDTH = 60;
 export const OBSTACLE_SPACING = 320;
-export const PLAYER_RADIUS = 20;
+export const PLAYER_RADIUS = 18; // Smaller for better mobile gameplay
 
 export const createPlayer = (canvasHeight: number): Player => ({
   x: 100,
@@ -120,25 +120,20 @@ export const drawPlayer = (
   ctx.translate(player.x, player.y);
   ctx.rotate((player.rotation * Math.PI) / 180);
 
-  if (baseLogoImg && baseLogoImg.complete) {
-    const size = player.radius * 2;
-    // Enable smooth rendering and remove any white edges
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    
-    // Clear any background to prevent white border
-    ctx.globalCompositeOperation = 'source-over';
-    
-    // Draw with slight inset to avoid white edge artifacts
-    const inset = 0.5;
-    ctx.drawImage(baseLogoImg, -size / 2 + inset, -size / 2 + inset, size - inset * 2, size - inset * 2);
-  } else {
-    // Fallback circle
-    ctx.beginPath();
-    ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
-    ctx.fillStyle = '#0ea5a4';
-    ctx.fill();
-  }
+  // Draw blue square (Base logo style)
+  const size = player.radius * 1.8; // Slightly smaller for better collision feel
+  const borderRadius = 8;
+  
+  // Draw rounded square
+  ctx.fillStyle = '#0052FF'; // Base blue color
+  ctx.beginPath();
+  ctx.roundRect(-size / 2, -size / 2, size, size, borderRadius);
+  ctx.fill();
+  
+  // Add subtle shadow for depth
+  ctx.shadowColor = 'rgba(0, 82, 255, 0.5)';
+  ctx.shadowBlur = 10;
+  ctx.fill();
 
   ctx.restore();
 };

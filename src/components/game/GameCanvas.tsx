@@ -12,7 +12,7 @@ import {
   JUMP_FORCE,
 } from '@/lib/gameEngine';
 import { soundManager } from '@/lib/sounds';
-import baseLogoImg from '@/assets/base-logo.png';
+// Logo now drawn directly on canvas
 
 interface GameCanvasProps {
   isPlaying: boolean;
@@ -27,7 +27,6 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
   const [score, setScore] = useState(0);
   const [nextObstacleId, setNextObstacleId] = useState(1);
   const animationFrameRef = useRef<number>();
-  const baseLogoRef = useRef<HTMLImageElement>();
   const lastFrameTimeRef = useRef<number>(0);
 
   // Initialize game
@@ -51,11 +50,6 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
     
     // Initialize with first obstacle
     setObstacles([createObstacle(canvas.width, canvas.height, 0)]);
-
-    // Load Base logo
-    const img = new Image();
-    img.src = baseLogoImg;
-    baseLogoRef.current = img;
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
@@ -153,7 +147,7 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
         drawObstacle(ctx, obstacle, canvas.height);
       });
 
-      drawPlayer(ctx, updatedPlayer, baseLogoRef.current);
+      drawPlayer(ctx, updatedPlayer);
 
       animationFrameRef.current = requestAnimationFrame(gameLoop);
     };
