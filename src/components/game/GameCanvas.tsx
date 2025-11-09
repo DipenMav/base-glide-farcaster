@@ -28,6 +28,7 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
   const [nextObstacleId, setNextObstacleId] = useState(1);
   const animationFrameRef = useRef<number>();
   const baseLogoRef = useRef<HTMLImageElement>();
+  const lastFrameTimeRef = useRef<number>(0);
 
   // Initialize game
   useEffect(() => {
@@ -109,18 +110,24 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
     if (!canvas || !ctx) return;
 
     let localScore = score;
+    lastFrameTimeRef.current = performance.now();
 
-    const gameLoop = () => {
-      // Update player
-      const updatedPlayer = updatePlayer(player, canvas.height);
+    const gameLoop = (currentTime: number) => {
+      // Calculate delta time (normalized to 60 FPS = 1.0)
+      const deltaTime = Math.min((currentTime - lastFrameTimeRef.current) / (1000 / 60), 2);
+      lastFrameTimeRef.current = currentTime;
+
+      // Update player with delta time
+      const updatedPlayer = updatePlayer(player, canvas.height, deltaTime);
       setPlayer(updatedPlayer);
 
-      // Update obstacles
+      // Update obstacles with delta time
       const { obstacles: updatedObstacles, newScore, nextId } = updateObstacles(
         obstacles,
         canvas.width,
         canvas.height,
-        nextObstacleId
+        nextObstacleId,
+        deltaTime
       );
       setObstacles(updatedObstacles);
       setNextObstacleId(nextId);

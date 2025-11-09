@@ -1,11 +1,12 @@
 import { Player, Obstacle } from '@/types/game';
 
-export const GRAVITY = 0.6;
-export const JUMP_FORCE = -10;
-export const OBSTACLE_SPEED = 3;
-export const OBSTACLE_GAP = 180;
+// Base values for 60 FPS (normalized with delta time)
+export const GRAVITY = 0.4;
+export const JUMP_FORCE = -8;
+export const OBSTACLE_SPEED = 2;
+export const OBSTACLE_GAP = 200;
 export const OBSTACLE_WIDTH = 60;
-export const OBSTACLE_SPACING = 300;
+export const OBSTACLE_SPACING = 350;
 export const PLAYER_RADIUS = 20;
 
 export const createPlayer = (canvasHeight: number): Player => ({
@@ -32,9 +33,9 @@ export const createObstacle = (canvasWidth: number, canvasHeight: number, id: nu
   };
 };
 
-export const updatePlayer = (player: Player, canvasHeight: number): Player => {
-  let newVelocity = player.velocity + GRAVITY;
-  let newY = player.y + newVelocity;
+export const updatePlayer = (player: Player, canvasHeight: number, deltaTime: number = 1): Player => {
+  let newVelocity = player.velocity + (GRAVITY * deltaTime);
+  let newY = player.y + (newVelocity * deltaTime);
   let newRotation = Math.min(Math.max(newVelocity * 3, -30), 90);
 
   // Ground collision
@@ -61,13 +62,14 @@ export const updateObstacles = (
   obstacles: Obstacle[],
   canvasWidth: number,
   canvasHeight: number,
-  nextId: number
+  nextId: number,
+  deltaTime: number = 1
 ): { obstacles: Obstacle[]; newScore: number; nextId: number } => {
   let newScore = 0;
   
   const updatedObstacles = obstacles
     .map(obstacle => {
-      const newX = obstacle.x - OBSTACLE_SPEED;
+      const newX = obstacle.x - (OBSTACLE_SPEED * deltaTime);
       const newObstacle = { ...obstacle, x: newX };
       
       // Check if obstacle passed the player
@@ -120,6 +122,9 @@ export const drawPlayer = (
 
   if (baseLogoImg && baseLogoImg.complete) {
     const size = player.radius * 2;
+    // Enable smooth rendering for better quality
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(baseLogoImg, -size / 2, -size / 2, size, size);
   } else {
     // Fallback circle
@@ -127,9 +132,6 @@ export const drawPlayer = (
     ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
     ctx.fillStyle = '#0ea5a4';
     ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 3;
-    ctx.stroke();
   }
 
   ctx.restore();
