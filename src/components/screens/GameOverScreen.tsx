@@ -1,6 +1,7 @@
 import { GameButton } from '@/components/ui/game-button';
 import { RefreshCw, Share2, Home, Trophy, Heart } from 'lucide-react';
 import { toast } from 'sonner';
+import { sdk } from '@farcaster/miniapp-sdk';
 
 interface GameOverScreenProps {
   score: number;
@@ -64,8 +65,22 @@ export const GameOverScreen = ({
 
         <button
           onClick={() => {
-            window.location.href = 'ethereum:0xEcAb7178c118Ee4A664420F510253511539F07A5?chain=base';
-            toast.success('Thanks for supporting indie devs 🩵');
+            if (sdk?.wallet?.ethProvider) {
+              // Use eth provider to send transaction in miniapp mode
+              sdk.wallet.ethProvider.request({
+                method: 'eth_sendTransaction',
+                params: [{
+                  to: '0xEcAb7178c118Ee4A664420F510253511539F07A5',
+                  chainId: '0x2105', // Base chain ID in hex
+                }]
+              }).then(() => {
+                toast.success('Thanks for supporting indie devs 🩵');
+              }).catch(() => {
+                toast.error('Transaction cancelled');
+              });
+            } else {
+              toast.info('Tip feature available in full app mode');
+            }
           }}
           className="relative flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0ea5a4] to-[#2dd4bf] font-bold text-[#042026] shadow-glow transition-all duration-200 hover:scale-105 active:scale-95"
         >

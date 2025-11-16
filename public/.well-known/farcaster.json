@@ -1,0 +1,11 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "Base Glide",
+    "description": "A Flappy Bird-style game on Base chain",
+    "icon": "https://base-glide-farcaster-fun.vercel.app/base-logo.png",
+    "splashImage": "https://base-glide-farcaster-fun.vercel.app/base-logo.png",
+    "splashBackgroundColor": "#042026",
+    "homeUrl": "https://base-glide-farcaster-fun.vercel.app/"
+  }
+}
