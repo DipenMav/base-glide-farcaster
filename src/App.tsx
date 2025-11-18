@@ -12,9 +12,10 @@ const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {
-    // Only call ready() if running inside Warpcast Mini App
-    if (sdk?.actions) {
-      sdk.actions.ready();
+    try {
+      sdk?.actions?.ready?.();
+    } catch (err) {
+      console.warn("Mini App SDK init skipped", err);
     }
   }, []);
 
@@ -23,11 +24,11 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename="/">
           <Routes>
             <Route path="/" element={<Index />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<Index />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
