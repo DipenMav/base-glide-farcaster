@@ -64,11 +64,16 @@ export const GameOverScreen = ({
         </GameButton>
 
         <button
-          onClick={() => {
-            sdk.wallet.open({
-              chainId: "eip155:8453",
-              address: "0xEcAb7178c118Ee4A664420F510253511539F07A5"
-            });
+          onClick={async () => {
+            try {
+              await sdk.actions.sendToken({
+                recipientAddress: "0xEcAb7178c118Ee4A664420F510253511539F07A5",
+                token: "eip155:8453/erc20:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+              });
+            } catch (error) {
+              console.error("Tip failed:", error);
+              toast.error("Tip feature available in Warpcast");
+            }
           }}
           className="relative flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0ea5a4] to-[#2dd4bf] font-bold text-[#042026] shadow-glow transition-all duration-200 hover:scale-105 active:scale-95"
         >
