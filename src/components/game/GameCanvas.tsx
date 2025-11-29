@@ -79,19 +79,26 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
       }
     };
 
-    const handleTouch = () => {
+    const handleTouchStart = (e: TouchEvent) => {
+      e.preventDefault(); // Prevents mousedown from also firing
+      handleJump();
+    };
+
+    const handleMouseDown = () => {
       handleJump();
     };
 
     window.addEventListener('keydown', handleKeyPress);
     const canvas = canvasRef.current;
-    canvas?.addEventListener('touchstart', handleTouch);
-    canvas?.addEventListener('mousedown', handleTouch);
+    
+    // Use { passive: false } to allow preventDefault() on touch events
+    canvas?.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas?.addEventListener('mousedown', handleMouseDown);
 
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
-      canvas?.removeEventListener('touchstart', handleTouch);
-      canvas?.removeEventListener('mousedown', handleTouch);
+      canvas?.removeEventListener('touchstart', handleTouchStart);
+      canvas?.removeEventListener('mousedown', handleMouseDown);
     };
   }, [isPlaying, player]);
 
