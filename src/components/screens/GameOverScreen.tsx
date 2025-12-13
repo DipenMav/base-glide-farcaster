@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { GameButton } from '@/components/ui/game-button';
-import { RefreshCw, Share2, Home, Trophy } from 'lucide-react';
+import { RefreshCw, Share2, Home, Trophy, Heart } from 'lucide-react';
+import { useFarcaster } from '@/providers/FarcasterProvider';
+import { TipDeveloperModal } from '@/components/TipDeveloperModal';
 
 interface GameOverScreenProps {
   score: number;
@@ -19,6 +22,8 @@ export const GameOverScreen = ({
   onLeaderboard,
 }: GameOverScreenProps) => {
   const isNewBest = score === bestScore && score > 0;
+  const { isInMiniApp } = useFarcaster();
+  const [showTipModal, setShowTipModal] = useState(false);
 
   return (
     <div className="flex flex-col items-center justify-center h-full gap-6 p-8 animate-slide-up">
@@ -71,11 +76,20 @@ export const GameOverScreen = ({
             Menu
           </GameButton>
         </div>
+
+        {isInMiniApp && (
+          <GameButton variant="outline" onClick={() => setShowTipModal(true)}>
+            <Heart className="w-5 h-5 text-destructive" />
+            Tip Developer
+          </GameButton>
+        )}
       </div>
 
       <div className="absolute bottom-8 text-xs text-muted-foreground text-center">
         Built by <span className="text-primary">@dipenmav</span> 💙 on Base
       </div>
+
+      <TipDeveloperModal open={showTipModal} onClose={() => setShowTipModal(false)} />
     </div>
   );
 };

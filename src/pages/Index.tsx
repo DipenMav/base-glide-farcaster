@@ -7,6 +7,8 @@ import { LeaderboardScreen } from '@/components/screens/LeaderboardScreen';
 import { SettingsScreen } from '@/components/screens/SettingsScreen';
 import { storage } from '@/lib/storage';
 import { soundManager } from '@/lib/sounds';
+import { submitScore } from '@/lib/leaderboard';
+import { useFarcaster } from '@/providers/FarcasterProvider';
 import { toast } from 'sonner';
 
 type Screen = 'splash' | 'menu' | 'game' | 'gameover' | 'leaderboard' | 'settings';
@@ -16,6 +18,7 @@ const Index = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
+  const { user, isInMiniApp } = useFarcaster();
 
   useEffect(() => {
     const savedBestScore = storage.getBestScore();
@@ -45,9 +48,23 @@ const Index = () => {
     }
   };
 
-  const handleGameOver = () => {
+  const handleGameOver = async () => {
     setIsPlaying(false);
     setCurrentScreen('gameover');
+
+    // Auto-submit score if user is logged in via Farcaster
+    if (isInMiniApp && user && score > 0) {
+      const submitted = await submitScore(
+        user.fid,
+        user.username,
+        user.displayName,
+        user.pfpUrl,
+        score
+      );
+      if (submitted) {
+        toast.success('Score submitted to leaderboard!');
+      }
+    }
   };
 
   const handlePause = () => {
