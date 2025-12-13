@@ -23,10 +23,12 @@ export interface Obstacle {
 }
 
 export interface LeaderboardEntry {
-  id?: string;
-  playerName: string;
-  walletAddress?: string;
-  farcasterHandle?: string;
+  id: string;
+  fid: number;
+  username: string | null;
+  display_name: string | null;
+  pfp_url: string | null;
   score: number;
-  createdAt?: string;
+  created_at: string;
+  updated_at: string;
 }
