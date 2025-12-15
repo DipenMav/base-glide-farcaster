@@ -11,7 +11,7 @@ interface TipDeveloperModalProps {
   onClose: () => void;
 }
 
-const DEVELOPER_ADDRESS = '0xEcAb7178c118Ee4A664420F510253511539F07A5';
+const DEVELOPER_ADDRESS = '0x84b2c8cCC2AAdCc0Fb540B6440Dcd84bD8aEf37a';
 const ETH_TOKEN = 'eip155:8453/slip44:60'; // Native ETH on Base
 
 const TIP_OPTIONS = [
