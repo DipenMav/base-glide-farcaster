@@ -122,13 +122,14 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
       const updatedPlayer = updatePlayer(player, canvas.height, deltaTime);
       setPlayer(updatedPlayer);
 
-      // Update obstacles with delta time
+      // Update obstacles with delta time and current score for difficulty
       const { obstacles: updatedObstacles, newScore, nextId } = updateObstacles(
         obstacles,
         canvas.width,
         canvas.height,
         nextObstacleId,
-        deltaTime
+        deltaTime,
+        localScore
       );
       setObstacles(updatedObstacles);
       setNextObstacleId(nextId);

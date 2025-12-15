@@ -3,11 +3,29 @@ import { Player, Obstacle } from '@/types/game';
 // Base values for 60 FPS (normalized with delta time)
 export const GRAVITY = 0.5;
 export const JUMP_FORCE = -9;
-export const OBSTACLE_SPEED = 2.5;
-export const OBSTACLE_GAP = 190;
+export const BASE_OBSTACLE_SPEED = 2.5;
+export const BASE_OBSTACLE_GAP = 190;
 export const OBSTACLE_WIDTH = 60;
 export const OBSTACLE_SPACING = 320;
 export const PLAYER_RADIUS = 18; // Smaller for better mobile gameplay
+export const DIFFICULTY_THRESHOLD = 25;
+
+// Calculate difficulty multipliers based on score
+export const getDifficultyMultiplier = (score: number): { 
+  speedMultiplier: number; 
+  gapMultiplier: number 
+} => {
+  if (score < DIFFICULTY_THRESHOLD) {
+    return { speedMultiplier: 1, gapMultiplier: 1 };
+  }
+  
+  // Progressive difficulty after threshold
+  const extraScore = score - DIFFICULTY_THRESHOLD;
+  const speedMultiplier = Math.min(1 + (extraScore * 0.015), 1.6); // Max 60% faster
+  const gapMultiplier = Math.max(1 - (extraScore * 0.008), 0.75); // Gap shrinks to 75%
+  
+  return { speedMultiplier, gapMultiplier };
+};
 
 export const createPlayer = (canvasHeight: number): Player => ({
   x: 100,
@@ -17,16 +35,19 @@ export const createPlayer = (canvasHeight: number): Player => ({
   rotation: 0,
 });
 
-export const createObstacle = (canvasWidth: number, canvasHeight: number, id: number): Obstacle => {
+export const createObstacle = (canvasWidth: number, canvasHeight: number, id: number, score: number = 0): Obstacle => {
+  const { gapMultiplier } = getDifficultyMultiplier(score);
+  const currentGap = Math.floor(BASE_OBSTACLE_GAP * gapMultiplier);
+  
   const minGapY = 100;
-  const maxGapY = canvasHeight - OBSTACLE_GAP - 100;
+  const maxGapY = canvasHeight - currentGap - 100;
   const gapY = Math.random() * (maxGapY - minGapY) + minGapY;
   
   return {
     id,
     x: canvasWidth,
     gapY,
-    gapSize: OBSTACLE_GAP,
+    gapSize: currentGap,
     width: OBSTACLE_WIDTH,
     passed: false,
     isBullish: Math.random() > 0.5,
@@ -63,13 +84,16 @@ export const updateObstacles = (
   canvasWidth: number,
   canvasHeight: number,
   nextId: number,
-  deltaTime: number = 1
+  deltaTime: number = 1,
+  currentScore: number = 0
 ): { obstacles: Obstacle[]; newScore: number; nextId: number } => {
   let newScore = 0;
+  const { speedMultiplier } = getDifficultyMultiplier(currentScore);
+  const currentSpeed = BASE_OBSTACLE_SPEED * speedMultiplier;
   
   const updatedObstacles = obstacles
     .map(obstacle => {
-      const newX = obstacle.x - (OBSTACLE_SPEED * deltaTime);
+      const newX = obstacle.x - (currentSpeed * deltaTime);
       const newObstacle = { ...obstacle, x: newX };
       
       // Check if obstacle passed the player
@@ -85,7 +109,7 @@ export const updateObstacles = (
   // Add new obstacle if needed
   const lastObstacle = updatedObstacles[updatedObstacles.length - 1];
   if (!lastObstacle || lastObstacle.x < canvasWidth - OBSTACLE_SPACING) {
-    updatedObstacles.push(createObstacle(canvasWidth, canvasHeight, nextId));
+    updatedObstacles.push(createObstacle(canvasWidth, canvasHeight, nextId, currentScore));
     nextId++;
   }
 

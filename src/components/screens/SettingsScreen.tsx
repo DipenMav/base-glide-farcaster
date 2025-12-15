@@ -14,7 +14,7 @@ interface SettingsScreenProps {
 export const SettingsScreen = ({ onBack }: SettingsScreenProps) => {
   const [playerName, setPlayerName] = useState(storage.getPlayerName());
   const [soundEnabled, setSoundEnabled] = useState(storage.getSoundEnabled());
-  const [walletAddress] = useState('0xEcAb7178c118Ee4A664420F510253511539F07A5');
+  const [walletAddress] = useState('0x84b2c8cCC2AAdCc0Fb540B6440Dcd84bD8aEf37a');
 
   useEffect(() => {
     soundManager.setEnabled(soundEnabled);
