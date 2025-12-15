@@ -1,30 +1,24 @@
 import { useState, useEffect } from 'react';
 import { GameButton } from '@/components/ui/game-button';
-import { ArrowLeft, Volume2, VolumeX, Wallet } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { ArrowLeft, Volume2, VolumeX, Wallet, User } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { storage } from '@/lib/storage';
 import { soundManager } from '@/lib/sounds';
+import { useFarcaster } from '@/providers/FarcasterProvider';
 
 interface SettingsScreenProps {
   onBack: () => void;
 }
 
 export const SettingsScreen = ({ onBack }: SettingsScreenProps) => {
-  const [playerName, setPlayerName] = useState(storage.getPlayerName());
   const [soundEnabled, setSoundEnabled] = useState(storage.getSoundEnabled());
   const [walletAddress] = useState('0x84b2c8cCC2AAdCc0Fb540B6440Dcd84bD8aEf37a');
+  const { user, isInMiniApp } = useFarcaster();
 
   useEffect(() => {
     soundManager.setEnabled(soundEnabled);
     storage.setSoundEnabled(soundEnabled);
   }, [soundEnabled]);
-
-  const handleSaveName = () => {
-    storage.setPlayerName(playerName);
-    soundManager.playClick();
-  };
 
   return (
     <div className="flex flex-col h-full p-6 gap-6">
@@ -36,23 +30,37 @@ export const SettingsScreen = ({ onBack }: SettingsScreenProps) => {
       </div>
 
       <div className="flex-1 space-y-6">
-        {/* Player Name */}
-        <div className="bg-card rounded-xl p-6 shadow-card space-y-3">
-          <Label htmlFor="playerName" className="text-sm font-medium">
-            Player Name
-          </Label>
-          <div className="flex gap-2">
-            <Input
-              id="playerName"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              placeholder="Enter your name"
-              className="flex-1"
-            />
-            <GameButton variant="secondary" onClick={handleSaveName}>
-              Save
-            </GameButton>
-          </div>
+        {/* Farcaster Profile */}
+        <div className="bg-card rounded-xl p-6 shadow-card">
+          {isInMiniApp && user ? (
+            <div className="flex items-center gap-4">
+              <img 
+                src={user.pfpUrl} 
+                alt={user.displayName} 
+                className="w-14 h-14 rounded-full border-2 border-primary"
+              />
+              <div className="flex-1">
+                <div className="font-bold text-lg">{user.displayName}</div>
+                <div className="text-sm text-muted-foreground">@{user.username}</div>
+                <div className="text-xs text-muted-foreground mt-1">FID: {user.fid}</div>
+              </div>
+              <div className="bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">
+                Connected
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+                <User className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <div className="flex-1">
+                <div className="font-medium">Not Connected</div>
+                <p className="text-sm text-muted-foreground">
+                  Open in Warpcast to connect your Farcaster account
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Sound Toggle */}
@@ -79,7 +87,7 @@ export const SettingsScreen = ({ onBack }: SettingsScreenProps) => {
         <div className="bg-card rounded-xl p-6 shadow-card space-y-3">
           <div className="flex items-center gap-2">
             <Wallet className="w-5 h-5 text-primary" />
-            <Label className="text-sm font-medium">Developer Wallet</Label>
+            <span className="text-sm font-medium">Developer Wallet</span>
           </div>
           <div className="text-xs text-muted-foreground break-all font-mono bg-muted/50 p-3 rounded-lg">
             {walletAddress}
@@ -87,17 +95,6 @@ export const SettingsScreen = ({ onBack }: SettingsScreenProps) => {
           <p className="text-xs text-muted-foreground">
             Support the developer by sending tips to this Base address
           </p>
-        </div>
-
-        {/* Farcaster Connection */}
-        <div className="bg-gradient-primary rounded-xl p-6 shadow-glow">
-          <h3 className="font-bold mb-2">Connect Farcaster</h3>
-          <p className="text-sm text-primary-foreground/80 mb-4">
-            Sign in with Neynar to save your scores and compete on the leaderboard
-          </p>
-          <GameButton variant="outline" className="w-full border-primary-foreground/20">
-            Coming Soon
-          </GameButton>
         </div>
       </div>
     </div>

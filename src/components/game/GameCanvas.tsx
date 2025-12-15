@@ -28,6 +28,10 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
   const [nextObstacleId, setNextObstacleId] = useState(1);
   const animationFrameRef = useRef<number>();
   const lastFrameTimeRef = useRef<number>(0);
+  const scoreRef = useRef(0);
+  const obstaclesRef = useRef<Obstacle[]>([]);
+  const nextObstacleIdRef = useRef(1);
+  const playerRef = useRef<Player | null>(null);
 
   // Initialize game
   useEffect(() => {
@@ -49,7 +53,10 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
     setPlayer(newPlayer);
     
     // Initialize with first obstacle
-    setObstacles([createObstacle(canvas.width, canvas.height, 0)]);
+    const initialObstacles = [createObstacle(canvas.width, canvas.height, 0)];
+    setObstacles(initialObstacles);
+    obstaclesRef.current = initialObstacles;
+    playerRef.current = newPlayer;
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
@@ -61,13 +68,12 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
 
   // Handle jump
   const handleJump = () => {
-    if (!isPlaying || !player) return;
+    if (!isPlaying || !playerRef.current) return;
     
-    setPlayer(prev => {
-      if (!prev) return prev;
-      soundManager.playFlap();
-      return { ...prev, velocity: JUMP_FORCE };
-    });
+    soundManager.playFlap();
+    const updatedPlayer = { ...playerRef.current, velocity: JUMP_FORCE };
+    playerRef.current = updatedPlayer;
+    setPlayer(updatedPlayer);
   };
 
   // Input handlers
@@ -102,42 +108,46 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
     };
   }, [isPlaying, player]);
 
-  // Game loop
+  // Game loop - only depends on isPlaying to prevent restarts
   useEffect(() => {
-    if (!isPlaying || !player) return;
+    if (!isPlaying) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    if (!canvas || !ctx || !playerRef.current) return;
 
-    let localScore = score;
     lastFrameTimeRef.current = performance.now();
 
     const gameLoop = (currentTime: number) => {
+      if (!playerRef.current) return;
+      
       // Calculate delta time (normalized to 60 FPS = 1.0)
       const deltaTime = Math.min((currentTime - lastFrameTimeRef.current) / (1000 / 60), 2);
       lastFrameTimeRef.current = currentTime;
 
-      // Update player with delta time
-      const updatedPlayer = updatePlayer(player, canvas.height, deltaTime);
+      // Update player with delta time using ref
+      const updatedPlayer = updatePlayer(playerRef.current, canvas.height, deltaTime);
+      playerRef.current = updatedPlayer;
       setPlayer(updatedPlayer);
 
-      // Update obstacles with delta time and current score for difficulty
+      // Update obstacles with delta time and current score for difficulty using refs
       const { obstacles: updatedObstacles, newScore, nextId } = updateObstacles(
-        obstacles,
+        obstaclesRef.current,
         canvas.width,
         canvas.height,
-        nextObstacleId,
+        nextObstacleIdRef.current,
         deltaTime,
-        localScore
+        scoreRef.current
       );
+      obstaclesRef.current = updatedObstacles;
+      nextObstacleIdRef.current = nextId;
       setObstacles(updatedObstacles);
       setNextObstacleId(nextId);
 
       if (newScore > 0) {
-        localScore += newScore;
-        setScore(localScore);
-        onScoreChange(localScore);
+        scoreRef.current += newScore;
+        setScore(scoreRef.current);
+        onScoreChange(scoreRef.current);
         soundManager.playScore();
       }
 
@@ -167,7 +177,7 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isPlaying, player, obstacles, score, nextObstacleId]);
+  }, [isPlaying, onScoreChange, onGameOver]);
 
   // Reset when not playing
   useEffect(() => {
@@ -175,9 +185,18 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
       const canvas = canvasRef.current;
       if (!canvas) return;
       
+      const newPlayer = createPlayer(canvas.height);
+      const initialObstacles = [createObstacle(canvas.width, canvas.height, 0)];
+      
+      // Reset all refs and state
+      scoreRef.current = 0;
+      playerRef.current = newPlayer;
+      obstaclesRef.current = initialObstacles;
+      nextObstacleIdRef.current = 1;
+      
       setScore(0);
-      setPlayer(createPlayer(canvas.height));
-      setObstacles([createObstacle(canvas.width, canvas.height, 0)]);
+      setPlayer(newPlayer);
+      setObstacles(initialObstacles);
       setNextObstacleId(1);
     }
   }, [isPlaying]);

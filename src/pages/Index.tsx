@@ -10,6 +10,7 @@ import { soundManager } from '@/lib/sounds';
 import { submitScore } from '@/lib/leaderboard';
 import { useFarcaster } from '@/providers/FarcasterProvider';
 import { toast } from 'sonner';
+import sdk from '@farcaster/miniapp-sdk';
 
 type Screen = 'splash' | 'menu' | 'game' | 'gameover' | 'leaderboard' | 'settings';
 
@@ -74,9 +75,24 @@ const Index = () => {
 
   const handleShare = async () => {
     soundManager.playClick();
-    const shareText = `I scored ${score > 0 ? score : bestScore} on #BaseGlide! Beat me if you can 🪂 @dipenmav`;
-    const shareUrl = `${window.location.origin}${score > 0 ? `?score=${score}` : ''}`;
+    const currentScore = score > 0 ? score : bestScore;
+    const shareText = `I scored ${currentScore} on #BaseGlide! Beat me if you can 🪂`;
+    const shareUrl = window.location.origin;
 
+    // Use Farcaster composeCast if in mini app
+    if (isInMiniApp) {
+      try {
+        await sdk.actions.composeCast({
+          text: shareText,
+          embeds: [shareUrl],
+        });
+        return;
+      } catch (err) {
+        console.warn('composeCast failed, using fallback:', err);
+      }
+    }
+
+    // Fallback for non-Farcaster
     if (navigator.share) {
       try {
         await navigator.share({
