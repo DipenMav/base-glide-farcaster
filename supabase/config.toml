@@ -1,1 +1,7 @@
 project_id = "jhyatzmcmtoovravmkfp"
+
+[functions.webhook]
+verify_jwt = false
+
+[functions.send-daily-notification]
+verify_jwt = false
