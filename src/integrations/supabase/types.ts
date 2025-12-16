@@ -14,7 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          created_at: string | null
+          display_name: string | null
+          fid: number
+          id: string
+          pfp_url: string | null
+          score: number
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_name?: string | null
+          fid: number
+          id?: string
+          pfp_url?: string | null
+          score?: number
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_name?: string | null
+          fid?: number
+          id?: string
+          pfp_url?: string | null
+          score?: number
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      notification_subscribers: {
+        Row: {
+          created_at: string | null
+          fid: number
+          id: string
+          is_active: boolean | null
+          notification_token: string
+          notification_url: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          fid: number
+          id?: string
+          is_active?: boolean | null
+          notification_token: string
+          notification_url: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          fid?: number
+          id?: string
+          is_active?: boolean | null
+          notification_token?: string
+          notification_url?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
