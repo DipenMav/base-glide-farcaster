@@ -7,8 +7,8 @@ export interface LeaderboardEntry {
   display_name: string | null;
   pfp_url: string | null;
   score: number;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export const submitScore = async (
@@ -18,11 +18,6 @@ export const submitScore = async (
   pfpUrl: string | undefined,
   score: number
 ): Promise<boolean> => {
-  if (!supabase) {
-    console.warn('Supabase not configured');
-    return false;
-  }
-
   try {
     // Check existing score
     const { data: existing } = await supabase
@@ -62,11 +57,6 @@ export const submitScore = async (
 };
 
 export const getLeaderboard = async (limit = 50): Promise<LeaderboardEntry[]> => {
-  if (!supabase) {
-    console.warn('Supabase not configured');
-    return [];
-  }
-
   try {
     const { data, error } = await supabase
       .from('leaderboard')

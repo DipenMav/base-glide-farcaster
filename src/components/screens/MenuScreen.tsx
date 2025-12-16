@@ -26,7 +26,14 @@ export const MenuScreen = ({
 
   const handleAddMiniApp = async () => {
     try {
-      await sdk.actions.addMiniApp();
+      const result = await sdk.actions.addMiniApp();
+      
+      // If user enabled notifications, the result contains notificationDetails
+      if (result?.notificationDetails) {
+        console.log('User added mini app with notifications:', result.notificationDetails);
+        // The webhook will handle storing the notification token
+      }
+      
       toast.success('Added to Warpcast!');
     } catch (err: unknown) {
       const error = err as { message?: string };

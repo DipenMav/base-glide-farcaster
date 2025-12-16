@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjg4NzQwMiwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweEM3MDlBNzJmNjk0MDhCMDI3RjJFNjQyNjlGODc5Mjk4NjU4NjI4QjEifQ",
+    "payload": "eyJkb21haW4iOiJiYXNlLWdsaWRlLmxvdmFibGUuYXBwIn0",
+    "signature": "MHgwZjNiMDgzZTc4MWRiN2YxM2FkNmI1ODY0NWRmYjU2OWQ0NmNjN2FlNjU0NTJmODMwNTg2ODNmMjM1MDhlODQwNTkzNTE1YjJjMDc3NzdkYWI4OTBlZTk2ZDkzNzc4NmQyNWVkMTBhZGUzNmQwNGU3ZjdhYjdhN2E3ZjU2NGExMzFj"
+  },
+  "frame": {
+    "version": "1",
+    "name": "Base Glide",
+    "iconUrl": "https://base-glide.lovable.app/base-logo.png",
+    "homeUrl": "https://base-glide.lovable.app",
+    "imageUrl": "https://base-glide.lovable.app/og-image.png",
+    "buttonTitle": "Play Base Glide",
+    "splashImageUrl": "https://base-glide.lovable.app/base-logo.png",
+    "splashBackgroundColor": "#0052FF",
+    "webhookUrl": "https://jhyatzmcmtoovravmkfp.supabase.co/functions/v1/webhook"
+  }
+}
