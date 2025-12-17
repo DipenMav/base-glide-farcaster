@@ -12,7 +12,7 @@ interface TipDeveloperModalProps {
   onClose: () => void;
 }
 
-const DEVELOPER_ADDRESS = '0x84b2c8cCC2AAdCc0Fb540B6440Dcd84bD8aEf37a';
+const DEVELOPER_ADDRESS = '0xEcAb7178c118Ee4A664420F510253511539F07A5';
 const USDC_TOKEN = 'eip155:8453/erc20:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'; // USDC on Base
 
 const TIP_OPTIONS = [
