@@ -4,6 +4,7 @@ import { GameButton } from '@/components/ui/game-button';
 
 interface GameScreenProps {
   isPlaying: boolean;
+  isPaused: boolean;
   score: number;
   bestScore: number;
   onScoreChange: (score: number) => void;
@@ -13,6 +14,7 @@ interface GameScreenProps {
 
 export const GameScreen = ({
   isPlaying,
+  isPaused,
   score,
   bestScore,
   onScoreChange,
@@ -46,6 +48,7 @@ export const GameScreen = ({
       {/* Game Canvas */}
       <GameCanvas
         isPlaying={isPlaying}
+        isPaused={isPaused}
         onScoreChange={onScoreChange}
         onGameOver={onGameOver}
       />
