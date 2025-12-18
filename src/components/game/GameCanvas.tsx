@@ -16,11 +16,12 @@ import { soundManager } from '@/lib/sounds';
 
 interface GameCanvasProps {
   isPlaying: boolean;
+  isPaused: boolean;
   onScoreChange: (score: number) => void;
   onGameOver: () => void;
 }
 
-export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasProps) => {
+export const GameCanvas = ({ isPlaying, isPaused, onScoreChange, onGameOver }: GameCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [player, setPlayer] = useState<Player | null>(null);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
@@ -108,9 +109,9 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
     };
   }, [isPlaying, player]);
 
-  // Game loop - only depends on isPlaying to prevent restarts
+  // Game loop - runs when playing and not paused
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying || isPaused) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
@@ -177,11 +178,11 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isPlaying, onScoreChange, onGameOver]);
+  }, [isPlaying, isPaused, onScoreChange, onGameOver]);
 
-  // Reset when not playing
+  // Reset only when game ends (not when paused)
   useEffect(() => {
-    if (!isPlaying) {
+    if (!isPlaying && !isPaused) {
       const canvas = canvasRef.current;
       if (!canvas) return;
       
@@ -199,7 +200,7 @@ export const GameCanvas = ({ isPlaying, onScoreChange, onGameOver }: GameCanvasP
       setObstacles(initialObstacles);
       setNextObstacleId(1);
     }
-  }, [isPlaying]);
+  }, [isPlaying, isPaused]);
 
   return (
     <canvas

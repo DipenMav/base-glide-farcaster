@@ -142,15 +142,27 @@ const Index = () => {
         );
       
       case 'game':
+      case 'paused':
         return (
-          <GameScreen
-            isPlaying={isPlaying}
-            score={score}
-            bestScore={bestScore}
-            onScoreChange={handleScoreChange}
-            onGameOver={handleGameOver}
-            onPause={handlePause}
-          />
+          <>
+            <GameScreen
+              isPlaying={isPlaying}
+              isPaused={currentScreen === 'paused'}
+              score={score}
+              bestScore={bestScore}
+              onScoreChange={handleScoreChange}
+              onGameOver={handleGameOver}
+              onPause={handlePause}
+            />
+            {currentScreen === 'paused' && (
+              <PauseScreen
+                score={score}
+                bestScore={bestScore}
+                onResume={handleResume}
+                onQuit={handleQuit}
+              />
+            )}
+          </>
         );
       
       case 'gameover':
@@ -162,16 +174,6 @@ const Index = () => {
             onShare={handleShare}
             onMenu={() => setCurrentScreen('menu')}
             onLeaderboard={() => setCurrentScreen('leaderboard')}
-          />
-        );
-      
-      case 'paused':
-        return (
-          <PauseScreen
-            score={score}
-            bestScore={bestScore}
-            onResume={handleResume}
-            onQuit={handleQuit}
           />
         );
       
