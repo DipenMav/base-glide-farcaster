@@ -5,6 +5,7 @@ import { GameScreen } from '@/components/screens/GameScreen';
 import { GameOverScreen } from '@/components/screens/GameOverScreen';
 import { LeaderboardScreen } from '@/components/screens/LeaderboardScreen';
 import { SettingsScreen } from '@/components/screens/SettingsScreen';
+import { PauseScreen } from '@/components/screens/PauseScreen';
 import { storage } from '@/lib/storage';
 import { soundManager } from '@/lib/sounds';
 import { submitScore } from '@/lib/leaderboard';
@@ -12,7 +13,7 @@ import { useFarcaster } from '@/providers/FarcasterProvider';
 import { toast } from 'sonner';
 import sdk from '@farcaster/miniapp-sdk';
 
-type Screen = 'splash' | 'menu' | 'game' | 'gameover' | 'leaderboard' | 'settings';
+type Screen = 'splash' | 'menu' | 'game' | 'gameover' | 'leaderboard' | 'settings' | 'paused';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
@@ -70,6 +71,16 @@ const Index = () => {
 
   const handlePause = () => {
     setIsPlaying(false);
+    setCurrentScreen('paused');
+  };
+
+  const handleResume = () => {
+    setIsPlaying(true);
+    setCurrentScreen('game');
+  };
+
+  const handleQuit = () => {
+    setScore(0);
     setCurrentScreen('menu');
   };
 
@@ -151,6 +162,16 @@ const Index = () => {
             onShare={handleShare}
             onMenu={() => setCurrentScreen('menu')}
             onLeaderboard={() => setCurrentScreen('leaderboard')}
+          />
+        );
+      
+      case 'paused':
+        return (
+          <PauseScreen
+            score={score}
+            bestScore={bestScore}
+            onResume={handleResume}
+            onQuit={handleQuit}
           />
         );
       
