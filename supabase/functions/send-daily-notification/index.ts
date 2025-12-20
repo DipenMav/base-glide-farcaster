@@ -6,6 +6,67 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Provocative notification templates - aggressive and engaging! 🔥
+const provocativeMessages = [
+  {
+    title: "🪡 Poke Alert",
+    getBody: (leader: string, score: number) => 
+      `Hey… yeah YOU 👀 @${leader} is still on top with ${score}pts. Your name? Missing 😏`
+  },
+  {
+    title: "😴 Comfort Zone Detected",
+    getBody: (leader: string, score: number) => 
+      `Leaderboard untouched. @${leader} still reigns with ${score}pts. Are you warming up… or scared? 👀🎮`
+  },
+  {
+    title: "👑 King Update",
+    getBody: (leader: string, score: number) => 
+      `@${leader} still on the throne with ${score}pts. No challengers today? That's awkward 😬`
+  },
+  {
+    title: "📉 Skill Issue?",
+    getBody: (leader: string, score: number) => 
+      `Game is simple. @${leader}'s ${score}pts says otherwise 😌 Think you can do better?`
+  },
+  {
+    title: "🤏 Just One Tap",
+    getBody: (leader: string, score: number) => 
+      `One run. One score. Or is that too much pressure? @${leader} didn't think so → ${score}pts 😈`
+  },
+  {
+    title: "🔥 Ego Check",
+    getBody: (leader: string, score: number) => 
+      `If you think "I can beat @${leader}'s ${score}pts"… prove it. Or keep scrolling 😏`
+  },
+  {
+    title: "🐔 Chicken Detector",
+    getBody: (leader: string, score: number) => 
+      `@${leader} owns the top with ${score}pts. Cluck or click? 🐔🎮`
+  },
+  {
+    title: "👀 Ghost Mode?",
+    getBody: (leader: string, score: number) => 
+      `@${leader} scored ${score}pts. You? Invisible. Change that 💪`
+  },
+  {
+    title: "🎯 Daily Challenge",
+    getBody: (leader: string, score: number) => 
+      `Target: Beat @${leader}'s ${score}pts. Difficulty: Depends on you 🎮`
+  },
+  {
+    title: "💀 Reality Check",
+    getBody: (leader: string, score: number) => 
+      `@${leader} → ${score}pts. You → excuses. Time to change that? 💀`
+  }
+];
+
+// Fallback messages when no leader exists
+const noLeaderMessages = [
+  { title: "🏆 Empty Throne", body: "Leaderboard is wide open. First to play = first to reign 👑" },
+  { title: "👻 Ghost Town", body: "No scores yet. Be the legend who starts it all 🎮" },
+  { title: "🎯 Fresh Start", body: "Leaderboard reset. Your chance to dominate! 🔥" }
+];
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -47,11 +108,23 @@ serve(async (req) => {
       .limit(1)
       .single();
 
-    const notificationTitle = "🎮 Base Glide Daily Challenge!";
-    let notificationBody = "Ready to beat your high score? Play now!";
+    // Randomly select a provocative message
+    let notificationTitle: string;
+    let notificationBody: string;
     
-    if (topPlayer) {
-      notificationBody = `@${topPlayer.username || 'Someone'} leads with ${topPlayer.score}! Can you beat them?`;
+    if (topPlayer && topPlayer.username) {
+      const randomIndex = Math.floor(Math.random() * provocativeMessages.length);
+      const selectedMessage = provocativeMessages[randomIndex];
+      notificationTitle = selectedMessage.title;
+      notificationBody = selectedMessage.getBody(topPlayer.username, topPlayer.score);
+      console.log(`Selected message #${randomIndex}: ${notificationTitle}`);
+    } else {
+      // No leader yet - use fallback messages
+      const randomIndex = Math.floor(Math.random() * noLeaderMessages.length);
+      const selectedMessage = noLeaderMessages[randomIndex];
+      notificationTitle = selectedMessage.title;
+      notificationBody = selectedMessage.body;
+      console.log(`No leader - using fallback message #${randomIndex}`);
     }
 
     const results = {
